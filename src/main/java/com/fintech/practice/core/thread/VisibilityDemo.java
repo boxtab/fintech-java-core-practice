@@ -2,7 +2,7 @@ package com.fintech.practice.core.thread;
 
 public class VisibilityDemo
 {
-    private static boolean running = true;  // Без volatile!
+    private volatile static boolean running = true;  // Без volatile!
 
     public static void main(String[] args) throws InterruptedException
     {
