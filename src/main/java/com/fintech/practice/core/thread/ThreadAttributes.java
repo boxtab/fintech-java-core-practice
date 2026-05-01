@@ -1,23 +1,44 @@
 package com.fintech.practice.core.thread;
 
-public class ThreadAttributes
-{
-    public static void main(String[] args)
-    {
-        int x = 5;
-        foo(x);
+public class ThreadAttributes {
+
+    private static final ThreadLocal<String> USER = new ThreadLocal<>();
+
+    public static void main(String[] args) throws InterruptedException {
+
+        Thread t1 = new Thread(() -> {
+            USER.set("Alice");
+            System.out.println("[" + Thread.currentThread().getName() + "] установил USER = Alice");
+
+            sleep(100);
+
+            System.out.println("[" + Thread.currentThread().getName() + "] читает: " + USER.get());
+        }, "Thread-Alice");
+
+        Thread t2 = new Thread(() -> {
+            USER.set("Bob");
+            System.out.println("[" + Thread.currentThread().getName() + "] установил USER = Bob");
+
+            sleep(100);
+
+            System.out.println("[" + Thread.currentThread().getName() + "] читает: " + USER.get());
+        }, "Thread-Bob");
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        System.out.println("[" + Thread.currentThread().getName() + "] в main: " + USER.get());
     }
 
-    static void foo(int a)
-    {
-        if (a > 0) {
-            bar(a);
+    private static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
         }
-        System.out.println("foo end");
-    }
-
-    static void bar(int b)
-    {
-        System.out.println("bar: " + b);
     }
 }
